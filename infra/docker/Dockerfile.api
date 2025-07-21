@@ -1,6 +1,18 @@
 FROM python:3.11-slim
+
 WORKDIR /app
+
+# Install dependencies
 COPY backend/api-gateway/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy API code
 COPY backend/api-gateway/ .
-CMD ["uvicorn", "main:app", "--host", "127.0.0.1", "--port", "8000"]
+
+# Copy shared service modules
+COPY backend/services/ ./services
+
+# Tell Python where to look for `services`
+ENV PYTHONPATH=/app
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
